@@ -24,8 +24,8 @@ int main(int argc, char **argv)
     int onoff = 0;
     setlogmask (LOG_UPTO (LOG_NOTICE));
     openlog ("softshut", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
-    syslog (LOG_NOTICE, "Program started by User %d", getuid ());
-    syslog (LOG_INFO, "softshut start");
+    syslog(LOG_NOTICE, "Program started by User %d", getuid ());
+    syslog(LOG_INFO, "softshut start");
 
  // GPIO 初始化
     printf("bcm2835_init!\n");
@@ -33,9 +33,9 @@ int main(int argc, char **argv)
         return 1;
 
  // 設定接腳狀態       
-    printf("set KEEP_POWERED_PIN\n");
+    syslog(LOG_NOTICE,"set KEEP_POWERED_PIN %d output", KEEP_POWERED_PIN);
     bcm2835_gpio_fsel(KEEP_POWERED_PIN, BCM2835_GPIO_FSEL_OUTP);
-    printf("set SOFT_OFF_PIN\n");
+    syslog(LOG_NOTICE,"set SOFT_OFF_PIN %d input", SOFT_OFF_PIN);
     bcm2835_gpio_fsel(SOFT_OFF_PIN, BCM2835_GPIO_FSEL_INPT);
  
     // 初始輸出狀態
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
         if (bcm2835_gpio_eds(SOFT_OFF_PIN))
         {   // Now clear the eds flag by setting it to 1
             bcm2835_gpio_set_eds(SOFT_OFF_PIN);
-            printf("low event detect for pin 16\n");
+            syslog(LOG_NOTICE,"low event detect for PIN %d", SOFT_OFF_PIN);
         }
         // wait a bit
         delay(500);
