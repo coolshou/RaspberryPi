@@ -6,8 +6,8 @@
 # Required-Stop:     $syslog
 # Default-Start:     S 1 2 3 4 5
 # Default-Stop:      0 6
-# Short-Description: run softshut.py python script 
-# Description:       softshut runs softshut.py which keeps monitor GPIO 16 and Let GPIO 18 Active(High)
+# Short-Description: run softshut
+# Description:       runs softshut which keeps monitor GPIO 16 (soft off) and Let GPIO 18 Active(High)
 ### END INIT INFO
 
 # Change the next 3 lines to suit where you install your script and what you want to call it
