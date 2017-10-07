@@ -9,6 +9,7 @@ require bcm2835-1.52
 #include <stdio.h>   // printf, scanf
 #include <bcm2835.h>
 #include <syslog.h>
+#include <unistd.h>  //getuid
 
 #define SOFT_OFF_PIN 23 // GPIO 23 = PIN 16, monitor soft off pin
 #define KEEP_POWERED_PIN   24 // GPIO 24 = PIN 18, keeps power pin
