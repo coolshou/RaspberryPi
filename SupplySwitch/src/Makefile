@@ -2,7 +2,7 @@
 CC=$(CROSS_COMPILE)gcc
 
 all: softshut
-softshut:
+softshut: clean
 	$(CC) softshut.c -l rt -l bcm2835 -std=gnu99 -o softshut
 
 clean:
