@@ -8,6 +8,7 @@ require bcm2835-1.52
 
 #include <stdio.h>   // printf, scanf
 #include <bcm2835.h>
+#include <syslog.h>
 
 #define SOFT_OFF_PIN 23 // GPIO 23 = PIN 16, monitor soft off pin
 #define KEEP_POWERED_PIN   24 // GPIO 24 = PIN 18, keeps power pin
@@ -18,9 +19,13 @@ int prog_exit(void);
 
 int main(int argc, char **argv)
 {
- int relay = 0;
- int onoff = 0;
- 
+    int relay = 0;
+    int onoff = 0;
+    setlogmask (LOG_UPTO (LOG_NOTICE));
+    openlog ("softshut", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
+    syslog (LOG_NOTICE, "Program started by User %d", getuid ());
+    syslog (LOG_INFO, "softshut start");
+
  // GPIO 初始化
     printf("bcm2835_init!\n");
     if(!bcm2835_init())
@@ -49,7 +54,8 @@ int main(int argc, char **argv)
         // wait a bit
         delay(500);
     }
-    
+    closelog ();
+
     return prog_exit();
 }
 
