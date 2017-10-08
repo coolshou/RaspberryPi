@@ -18,7 +18,7 @@ OBJS := ${addsuffix .o, $(basename ${SRCS})}
 	${CC} -c ${CFLAGS} ${INCLUDEDIR} $< -o $@ ${LIBS}
 
 all: ${OBJS}
-	${CXX} -Wl,-soname,${TARGER} -o ${TARGET} ${OBJS} ${LIBS}
+	${CXX} -Wl,-soname,${TARGET} -o ${TARGET} ${OBJS} ${LIBS}
 
 clean:
 	rm -f ${TARGET} ${OBJS} *.bak *~ core .depend
