@@ -29,6 +29,7 @@ void softoffInterrupt (void)
 
 int main(int argc, char **argv)
 {
+    int myCounter = 0 ;
     setlogmask (LOG_UPTO (LOG_NOTICE)); // discard log message bacause LOG_INFO priority level is below LOG_NOTICE
     openlog("softshut", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog(LOG_NOTICE, "Program started by User %d", getuid());
@@ -51,13 +52,22 @@ int main(int argc, char **argv)
     }
     //pullUpDnControl(SOFT_OFF_PIN, PUD_UP);//http://wiringpi.com/reference/core-functions/
     //syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", digitalRead(SOFT_OFF_PIN));
-    while(1)
+    for (;;)
     {
-        int rs = digitalRead(SOFT_OFF_PIN);
-        syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", rs);
-        delay(500);
+        while (myCounter == globalCounter)
+            delay (100) ;
+        syslog(LOG_NOTICE, " Done. counter: %5d\n", globalCounter) ;
+        myCounter = globalCounter ;
+        /*
+        while(1)
+        {
+            int rs = digitalRead(SOFT_OFF_PIN);
+            syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", rs);
+            delay(500);
+        }*/
     }
     digitalWrite(KEEP_POWERED_PIN,0);
+    
 
     closelog ();    
     return 0;
