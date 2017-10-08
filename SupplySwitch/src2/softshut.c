@@ -16,7 +16,7 @@ require wiringPi
 
 int main(int argc, char **argv)
 {
-    setlogmask (LOG_UPTO (LOG_NOTICE));
+    setlogmask (LOG_UPTO (LOG_NOTICE)); // discard log message bacause LOG_INFO priority level is below LOG_NOTICE
     openlog("softshut", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog(LOG_NOTICE, "Program started by User %d", getuid());
 
