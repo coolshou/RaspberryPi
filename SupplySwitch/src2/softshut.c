@@ -42,10 +42,11 @@ int main(int argc, char **argv)
 // 設定接腳狀態
     syslog(LOG_NOTICE,"set KEEP_POWERED_PIN %d output", KEEP_POWERED_PIN);
     pinMode(KEEP_POWERED_PIN,OUTPUT);
-    syslog(LOG_NOTICE,"set SOFT_OFF_PIN %d input", SOFT_OFF_PIN);
-    pinMode(SOFT_OFF_PIN,INPUT);
 // 初始狀態
     digitalWrite(KEEP_POWERED_PIN, 1);
+
+    //syslog(LOG_NOTICE,"set SOFT_OFF_PIN %d input", SOFT_OFF_PIN);
+    //pinMode(SOFT_OFF_PIN,INPUT);
     if (wiringPiISR (SOFT_OFF_PIN, INT_EDGE_RISING, &softoffInterrupt) < 0) {
         syslog(LOG_ERR, "Unable to setup ISR: %s\n", strerror(errno)) ;
         return 1 ;
