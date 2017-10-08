@@ -10,9 +10,21 @@ require wiringPi
 #include <wiringPi.h>
 #include <syslog.h>
 #include <unistd.h>  //getuid
+#include <errno.h>
 
 #define SOFT_OFF_PIN 4 // PIN 16, monitor soft off pin
 #define KEEP_POWERED_PIN   5 // PIN 18, keeps power pin
+
+/*
+ * softoffInterrupt:
+ *********************************************************************************
+ */
+static volatile int globalCounter = 0 ;
+void softoffInterrupt (void)
+{
+  ++globalCounter ;
+  syslog(LOG_NOTICE,"softoffInterrupt value: %d", globalCounter);
+}
 
 int main(int argc, char **argv)
 {
@@ -20,8 +32,7 @@ int main(int argc, char **argv)
     openlog("softshut", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
     syslog(LOG_NOTICE, "Program started by User %d", getuid());
 
-    if(wiringPiSetup()==-1)
-    {
+    if(wiringPiSetup()==-1) {
         syslog(LOG_ERR, "wiringPi Setup error");
         return -1 ;
     }
@@ -33,8 +44,12 @@ int main(int argc, char **argv)
     pinMode(SOFT_OFF_PIN,INPUT);
 // 初始狀態
     digitalWrite(KEEP_POWERED_PIN, 1);
-    pullUpDnControl(SOFT_OFF_PIN, PUD_UP);
-    syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", digitalRead(SOFT_OFF_PIN));
+    if (wiringPiISR (BUTTON_PIN, INT_EDGE_FALLING, &softoffInterrupt) < 0) {
+        syslog(LOG_ERR, "Unable to setup ISR: %s\n", strerror(errno)) ;
+        return 1 ;
+    }
+    //pullUpDnControl(SOFT_OFF_PIN, PUD_UP);//http://wiringpi.com/reference/core-functions/
+    //syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", digitalRead(SOFT_OFF_PIN));
     while(1)
     {
         int rs = digitalRead(SOFT_OFF_PIN);
