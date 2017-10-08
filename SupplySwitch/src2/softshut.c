@@ -25,20 +25,20 @@ int main(int argc, char **argv)
         syslog(LOG_ERR, "wiringPi Setup error");
         return -1 ;
     }
-    syslog(LOG_INFO, "softshut start for Raspberry Pi revision: %d", piBoardRev());
+    syslog(LOG_NOTICE, "softshut start for Raspberry Pi revision: %d", piBoardRev());
 // 設定接腳狀態
-    syslog(LOG_INFO,"set KEEP_POWERED_PIN %d output", KEEP_POWERED_PIN);
+    syslog(LOG_NOTICE,"set KEEP_POWERED_PIN %d output", KEEP_POWERED_PIN);
     pinMode(KEEP_POWERED_PIN,OUTPUT);
-    syslog(LOG_INFO,"set SOFT_OFF_PIN %d input", SOFT_OFF_PIN);
+    syslog(LOG_NOTICE,"set SOFT_OFF_PIN %d input", SOFT_OFF_PIN);
     pinMode(SOFT_OFF_PIN,INPUT);
 // 初始狀態
     digitalWrite(KEEP_POWERED_PIN, 1);
     pullUpDnControl(SOFT_OFF_PIN, PUD_UP);
-    syslog(LOG_INFO,"get SOFT_OFF_PIN value: %d", digitalRead(SOFT_OFF_PIN));
+    syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", digitalRead(SOFT_OFF_PIN));
     while(1)
     {
         int rs = digitalRead(SOFT_OFF_PIN);
-        syslog(LOG_INFO,"get SOFT_OFF_PIN value: %d", rs);
+        syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", rs);
         delay(500);
     }
     digitalWrite(KEEP_POWERED_PIN,0);
