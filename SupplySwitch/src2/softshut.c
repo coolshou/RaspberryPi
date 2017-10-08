@@ -10,6 +10,7 @@ require wiringPi
 #include <wiringPi.h>
 #include <syslog.h>
 #include <unistd.h>  //getuid
+#include <string.h>
 #include <errno.h>
 
 #define SOFT_OFF_PIN 4 // PIN 16, monitor soft off pin
@@ -44,7 +45,7 @@ int main(int argc, char **argv)
     pinMode(SOFT_OFF_PIN,INPUT);
 // 初始狀態
     digitalWrite(KEEP_POWERED_PIN, 1);
-    if (wiringPiISR (BUTTON_PIN, INT_EDGE_FALLING, &softoffInterrupt) < 0) {
+    if (wiringPiISR (SOFT_OFF_PIN, INT_EDGE_FALLING, &softoffInterrupt) < 0) {
         syslog(LOG_ERR, "Unable to setup ISR: %s\n", strerror(errno)) ;
         return 1 ;
     }
