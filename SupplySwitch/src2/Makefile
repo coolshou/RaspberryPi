@@ -25,4 +25,4 @@ clean:
 
 install:
 	cp softshut /usr/bin/
-	cp init.d/softshut /etc/init.d/
+	#cp init.d/softshut /etc/init.d/
