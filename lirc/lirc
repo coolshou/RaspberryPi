@@ -1,4 +1,0 @@
-#load lirc module
-lirc_dev
-#default gpio_in_pin is 18
-lirc_rpi gpio_in_pin=15 
