@@ -13,7 +13,12 @@ require wiringPi
 #include <string.h>
 #include <errno.h>
 #include <stdlib.h> // system()
-
+#include <signal.h> //  signal
+ 
+volatile sig_atomic_t termFlag = 0;
+void mySIGTERM(int sig){ // can be called asynchronously
+  termFlag = 1; // set flag
+}
 //
 #define SOFT_OFF_PIN 16 // wiringPi PIN 4, monitor soft off pin
 #define KEEP_POWERED_PIN   18 // wiringPi PIN 5, keeps power pin
@@ -32,6 +37,10 @@ void softoffInterrupt (void)
 
 int main(int argc, char **argv)
 {
+    // Register signals 
+    signal(SIGTERM, mySIGTERM); 
+    //      ^          ^
+    //  Which-Signal   |-- which user defined function registered
     int myCounter = 0 ;
     setlogmask (LOG_UPTO (LOG_NOTICE)); // discard log message bacause LOG_INFO priority level is below LOG_NOTICE
     openlog("softshut", LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
@@ -52,17 +61,23 @@ int main(int argc, char **argv)
 
     //syslog(LOG_NOTICE,"set SOFT_OFF_PIN %d input", SOFT_OFF_PIN);
     //pinMode(SOFT_OFF_PIN,INPUT);
-    //TODO: not work?? no trigger!! why
+    //TODO: not work?? not trigger!! why
     if (wiringPiISR (SOFT_OFF_PIN, INT_EDGE_RISING, &softoffInterrupt) < 0) {
         syslog(LOG_ERR, "Unable to setup ISR: %s\n", strerror(errno)) ;
         return 1 ;
     }
     //pullUpDnControl(SOFT_OFF_PIN, PUD_UP);//http://wiringpi.com/reference/core-functions/
     //syslog(LOG_NOTICE,"get SOFT_OFF_PIN value: %d", digitalRead(SOFT_OFF_PIN));
-    for (;;)
+    //for (;;)
     {
         while (myCounter == globalCounter) //wait for SOFT_OFF_PIN trigger
+        {    
+            if(termFlag){ // my action when signal set it 1
+                syslog("\n SIGTERM caught!\n");
+                softoffInterrupt();
+            }     
             delay (100) ;
+        }
         syslog(LOG_NOTICE, " Done. counter: %5d\n", globalCounter) ;
         //myCounter = globalCounter ;
     }
